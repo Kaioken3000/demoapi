@@ -1,11 +1,14 @@
 const Pool = require('pg').Pool;
+
+require('dotenv').config();
+
 const pool = new Pool({
-  user: 'demo_database_ycdm_user',
-  host: 'dpg-cnve5o6ct0pc73dmlag0-a.singapore-postgres.render.com',
-  database: 'api',
-  password: '4elTwuIsJZPVrB6xyaKxBJKvwwYg7b0I',
-  port: 5432,
-  ssl: true
+  user: process.env.POSTGRES_USER,
+  password: process.env.POSTGRES_PASSWORD,
+  host: process.env.POSTGRES_HOST,
+  database: process.env.POSTGRES_DB,
+  port: process.env.POSTGRES_PORT,
+  ssl: true,
 });
 
 
