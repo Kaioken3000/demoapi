@@ -69,8 +69,6 @@ const uploadExcel = (request, response) => {
         result.push([your_name, your_email]);
       })
       .on("end", () => {
-        fs.unlinkSync(request.file.path);
-        var check = 0;
         try {
           console.log(result)
           pool.query(format(
@@ -79,12 +77,13 @@ const uploadExcel = (request, response) => {
               if (error) {
                 throw error;
               }
-              return response.status(201).send(`User added with ID: ${results}}`);
+              return response.status(201).send(`User added with ID: ${request.file.path}}`);
             }
           );
         } catch (error) {
           return response.status(500).send('Error insert csv file');
         }
+        fs.unlinkSync(request.file.path);
       });
   } catch (error) {
     console.error(error);
