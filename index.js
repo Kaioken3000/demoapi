@@ -24,7 +24,7 @@ app.delete('/users/:id', db.deleteUser);
 
 const multer = require('multer');
 // SET STORAGE
-const upload = multer({ dest: 'http://gotech2.infinityfreeapp.com/gotech2/wp-content/uploads/wp_dndcf7_uploads/wpcf7-files/' });
+const upload = multer({ dest: 'uploads/' });
 // Configure Multer for file upload handling
 app.post('/uploadExcel', upload.single('uploads'), db.uploadExcel);
 
