@@ -22,6 +22,13 @@ app.post('/users', db.createUser);
 app.put('/users/:id', db.updateUser);
 app.delete('/users/:id', db.deleteUser);
 
+const multer = require('multer');
+// SET STORAGE
+const upload = multer({ dest: 'uploads/' });
+// Configure Multer for file upload handling
+app.post('/uploadExcel', upload.single('uploads'), db.uploadExcel);
+
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
 });

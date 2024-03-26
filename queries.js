@@ -1,4 +1,7 @@
 const Pool = require('pg').Pool;
+const fs = require('fs');
+const csvParser = require("csv-parser");
+var format = require('pg-format');
 
 require('dotenv').config();
 
@@ -47,6 +50,49 @@ const createUser = (request, response) => {
   );
 };
 
+const uploadExcel = (request, response) => {
+  try {
+    if (!request.file) {
+      return response.status(400).send('Please upload a CSV file');
+    }
+
+    const filePath = request.file.path;
+    var result = [];
+
+    // Parse the CSV file
+    var csvStream = fs.createReadStream(filePath, { encoding: "utf-8" });
+
+    csvStream.pipe(csvParser())
+      .on("data", (row) => {
+        var your_name = row["your_name"];
+        var your_email = row["your_email"];
+        result.push([your_name, your_email]);
+      })
+      .on("end", () => {
+        fs.unlinkSync(request.file.path);
+        var check = 0;
+        try {
+          console.log(result)
+          pool.query(format(
+            'INSERT INTO users (name, email) VALUES %L RETURNING *', result),
+            (error, results) => {
+              if (error) {
+                throw error;
+              }
+              return response.status(201).send(`User added with ID: ${results}}`);
+            }
+          );
+        } catch (error) {
+          return response.status(500).send('Error insert csv file');
+        }
+      });
+  } catch (error) {
+    console.error(error);
+    response.status(500).send('Error processing CSV file');
+  }
+  // fs.unlinkSync(request.file.path);
+};
+
 const updateUser = (request, response) => {
   const id = parseInt(request.params.id);
   const { name, email } = request.body;
@@ -80,4 +126,5 @@ module.exports = {
   createUser,
   updateUser,
   deleteUser,
+  uploadExcel,
 };
