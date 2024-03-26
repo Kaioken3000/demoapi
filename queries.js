@@ -33,11 +33,11 @@ const getUserById = (request, response) => {
 };
 
 const createUser = (request, response) => {
-  const { name, email } = request.body;
+  const { your_name, your_email } = request.body;
 
   pool.query(
     'INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *',
-    [name, email],
+    [your_name, your_email],
     (error, results) => {
       if (error) {
         throw error;
